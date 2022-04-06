@@ -41,16 +41,17 @@ return (
         const name = prompt("Enter item" ) 
         if(name){
           const prpt= {_id:uuidv4(),name:name}
+          console.log(prpt._id)
           fetch('http://localhost:5000/api/items', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body:JSON.stringify({name:prpt.name}),
+            body:JSON.stringify(prpt),
           }).then(res => {
             console.log(res)
             if (res.statusText=="OK") {
-              setitems(previtems => [...previtems,prpt])
+              setitems(previtems => [prpt,...previtems])
             } else {
               console.log("error in posting")
             }
@@ -67,14 +68,20 @@ return (
                 <ListGroupItem >
                   <Button className="remove-btn" color="danger"
                    onClick= {() => {
-                    const selecteditems = items.filter( item => item._id != _id);
-                    console.log(selecteditems);
-                    setitems(selecteditems);
+                    const selecteditems = items.filter( item => item._id != _id);                    console.log(selecteditems);
                     fetch(`http://localhost:5000/api/items/${_id}`, {
                       method: 'DELETE',
                       headers: {
                         'Content-Type': 'application/json',
                       },
+                    })
+                    .then(res => {
+                      console.log(res)
+                      if (res.statusText=="OK") {
+                        setitems(selecteditems);
+                      } else {
+                        console.log("error in deleting")
+                      }
                     })
                     }}>
                      x
